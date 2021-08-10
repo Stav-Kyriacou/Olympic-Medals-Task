@@ -3,6 +3,7 @@ import { Countries } from './models/Countries.enum';
 import { Country } from './models/Country';
 import { Sports } from './models/Sports.enum';
 import { Medals } from './models/Medals.enum';
+import { IResult } from './models/IResult';
 // TODO: required imports
 
 const countrySelect: HTMLSelectElement = <HTMLSelectElement>(
@@ -65,6 +66,29 @@ function init() {
 function addMedal() {
   //TODO: complete this function
 
+  let countryExists: Boolean = false;
+  let currentCountry: Country;
+  
+ 
+  for (let c of countries) {
+    if (countrySelect.selectedOptions[0].innerHTML === c.name) {
+      currentCountry = c;
+      countryExists = true;
+      break;
+    }
+  }
+
+  if (countryExists) {
+    let newResult: IResult = {
+    sport: Sports[sportSelect.options[sportSelect.selectedIndex].innerHTML],
+    medal: Medals[medalSelect.options[medalSelect.selectedIndex].innerHTML]
+    };
+    currentCountry.results.push(newResult);
+  }
+  else {
+    countries.push(new Country(countrySelect.options[countrySelect.selectedIndex].innerHTML));
+  }
+
   displayTable();
 }
 
@@ -80,7 +104,21 @@ function displayTable() {
   newBody.id = 'results-body';
 
   // TODO: create the rows required for the new table body element
+  let newRow = newBody.insertRow();
+  let cellCountry = newRow.insertCell(0);
+  let cellGold = newRow.insertCell(1);
+  let cellSilver = newRow.insertCell(2);
+  let cellBronze = newRow.insertCell(3);
+  let cellTotal = newRow.insertCell(4);
+
+  cellCountry.innerHTML = "country";
+  cellGold.innerHTML = "gold";
+  cellSilver.innerHTML = "silver";
+  cellBronze.innerHTML = "bronze";
+  cellTotal.innerHTML = "total";
+
 
   // replaces the old tbody with the new one created above
   resultsBody.parentNode.replaceChild(newBody, resultsBody);
 }
+

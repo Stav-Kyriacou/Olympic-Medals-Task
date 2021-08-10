@@ -5,10 +5,11 @@ export class Country{
   // TODO: Country requires a name attribute and a results attribute.
   // name is a string, results is an array of Result
   name: string;
-  results: Array<IResult> = [];
+  results: Array<IResult>;
   // TODO: receives a name and initialises the results array to an empty array
   constructor(name: string) {
-    
+    this.name = name;
+    this.results = Array<IResult>();
   }
 
   // return the total number of medals
