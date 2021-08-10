@@ -56,7 +56,7 @@ function init() {
       newOption.innerHTML = m;
       newOption.value = count.toString();
       count++;
-      sportSelect.add(newOption);
+      medalSelect.add(newOption);
     }
   }
 }
