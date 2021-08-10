@@ -69,7 +69,13 @@ function addMedal() {
   let countryExists: Boolean = false;
   let currentCountry: Country;
   
- 
+  //create a new result
+  let newResult: IResult = {
+  sport: Sports[sportSelect.options[sportSelect.selectedIndex].innerHTML],
+  medal: Medals[medalSelect.options[medalSelect.selectedIndex].innerHTML]
+  };
+
+  //check if the current country already exists in the array
   for (let c of countries) {
     if (countrySelect.selectedOptions[0].innerHTML === c.name) {
       currentCountry = c;
@@ -79,14 +85,13 @@ function addMedal() {
   }
 
   if (countryExists) {
-    let newResult: IResult = {
-    sport: Sports[sportSelect.options[sportSelect.selectedIndex].innerHTML],
-    medal: Medals[medalSelect.options[medalSelect.selectedIndex].innerHTML]
-    };
     currentCountry.results.push(newResult);
   }
   else {
-    countries.push(new Country(countrySelect.options[countrySelect.selectedIndex].innerHTML));
+    //if the country doesnt exist in the array, create a new one then push the result
+    let newCountry: Country = new Country(countrySelect.options[countrySelect.selectedIndex].innerHTML);
+    newCountry.results.push(newResult);
+    countries.push(newCountry);
   }
 
   displayTable();
@@ -104,19 +109,21 @@ function displayTable() {
   newBody.id = 'results-body';
 
   // TODO: create the rows required for the new table body element
-  let newRow = newBody.insertRow();
-  let cellCountry = newRow.insertCell(0);
-  let cellGold = newRow.insertCell(1);
-  let cellSilver = newRow.insertCell(2);
-  let cellBronze = newRow.insertCell(3);
-  let cellTotal = newRow.insertCell(4);
-
-  cellCountry.innerHTML = "country";
-  cellGold.innerHTML = "gold";
-  cellSilver.innerHTML = "silver";
-  cellBronze.innerHTML = "bronze";
-  cellTotal.innerHTML = "total";
-
+  for (let c of countries) {
+    let newRow = newBody.insertRow();
+    let cellCountry = newRow.insertCell(0);
+    let cellGold = newRow.insertCell(1);
+    let cellSilver = newRow.insertCell(2);
+    let cellBronze = newRow.insertCell(3);
+    let cellTotal = newRow.insertCell(4);
+    
+    cellCountry.innerHTML = c.name;
+    cellGold.innerHTML = c.totalMedalType(Medals.Gold).toString();
+    cellSilver.innerHTML = c.totalMedalType(Medals.Silver).toString();
+    cellBronze.innerHTML = c.totalMedalType(Medals.Bronze).toString();
+    cellTotal.innerHTML = c.results.length.toString();
+    
+  }
 
   // replaces the old tbody with the new one created above
   resultsBody.parentNode.replaceChild(newBody, resultsBody);
