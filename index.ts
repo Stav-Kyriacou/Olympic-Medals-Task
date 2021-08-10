@@ -17,8 +17,10 @@ const sportSelect: HTMLSelectElement = <HTMLSelectElement>(
 );
 
 const addButton: HTMLElement = document.getElementById('add-btn');
-//TODO: add an eventlistener to the button to trigger addMedal
+const resultsTable: HTMLTableElement = document.getElementById('results-table') as HTMLTableElement;
+
 addButton.addEventListener('click', addMedal);
+resultsTable.addEventListener('click', viewResults);
 
 let countries: Array<Country> = [];
 
@@ -64,15 +66,15 @@ function init() {
 
 // This function adds a medal to the countries tally
 function addMedal() {
-  //TODO: complete this function
 
   let countryExists: Boolean = false;
   let currentCountry: Country;
   
   //create a new result
   let newResult: IResult = {
-  sport: Sports[sportSelect.options[sportSelect.selectedIndex].innerHTML],
-  medal: Medals[medalSelect.options[medalSelect.selectedIndex].innerHTML]
+  sport: sportSelect.selectedIndex,
+  medal: Medals[medalSelect.selectedOptions[0].innerHTML]
+  // medal: Medals[medalSelect.options[medalSelect.selectedIndex].innerHTML]
   };
 
   //check if the current country already exists in the array
@@ -108,7 +110,6 @@ function displayTable() {
   );
   newBody.id = 'results-body';
 
-  // TODO: create the rows required for the new table body element
   for (let c of countries) {
     let newRow = newBody.insertRow();
     let cellCountry = newRow.insertCell(0);
@@ -116,6 +117,11 @@ function displayTable() {
     let cellSilver = newRow.insertCell(2);
     let cellBronze = newRow.insertCell(3);
     let cellTotal = newRow.insertCell(4);
+
+    //says not an array type but it works anyway?? compiler error? idk
+    for (let cell of newRow.cells) {
+      cell.id = c.name;
+    }
     
     cellCountry.innerHTML = c.name;
     cellGold.innerHTML = c.totalMedalType(Medals.Gold).toString();
@@ -129,3 +135,30 @@ function displayTable() {
   resultsBody.parentNode.replaceChild(newBody, resultsBody);
 }
 
+function viewResults(event) {
+  const resultsBody: HTMLTableSectionElement = <HTMLTableSectionElement>(document.getElementById('countryResults-body'));
+  let heading: HTMLElement = document.getElementById('country-h');
+  let newBody: HTMLTableSectionElement = <HTMLTableSectionElement>(document.createElement('tbody'));
+  newBody.id = 'countryResults-body';
+
+  let selectedCountry: Country;
+
+  for (let c of countries) {
+    if (event.target.id === c.name) {
+      selectedCountry = c;
+    }
+  }
+  heading.innerHTML = "Country: " + selectedCountry.name;
+
+  for (let result of selectedCountry.results) {
+    let newRow = newBody.insertRow();
+    let cellSport = newRow.insertCell(0);
+    let cellMedal = newRow.insertCell(1);
+
+    cellSport.innerHTML = Sports[result.sport];
+    cellMedal.innerHTML = result.medal;
+  }
+
+  // replaces the old tbody with the new one created above
+  resultsBody.parentNode.replaceChild(newBody, resultsBody);
+}
